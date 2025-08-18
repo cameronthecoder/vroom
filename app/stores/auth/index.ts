@@ -1,25 +1,20 @@
-import {defineStore} from 'pinia';
-import {ref} from 'vue';
+import type {DB} from '../../types/db';
 
+type User = DB['users'];
 
 export const useAuthStore = defineStore('auth', () => {
-    const user =  ref(null);
-    const token = ref(null);
+    const user =  ref(null as User | null);
 
 
-    const isAuthenticated = () => !!token.value;
+    const isAuthenticated = () => !!user.value;
 
-    const setUser = (newUser) => {
+    const setUser = (newUser: User) => {
         user.value = newUser;
-    }
-    const setToken = (newToken) => {
-        token.value = newToken;
     }
 
     const logout = () => {
         user.value = null;
-        token.value = null;
     }
 
-    return {isAuthenticated, setUser, setToken, logout};
+    return {isAuthenticated, setUser, logout};
 });

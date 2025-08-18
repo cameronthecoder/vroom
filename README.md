@@ -234,6 +234,11 @@ Full-stack insurance management system built with Nuxt.js, Nuxt UI, and PostgreS
 
 
 
+## Generate Database Types
+```bash
+yarn kysely-codegen --dialect postgres --connectionString "$DATABSE_URL" --out-file app/types/db.ts
+```
+
 ## Setup
 
 Make sure to install dependencies:

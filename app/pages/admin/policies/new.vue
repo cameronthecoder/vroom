@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import PolicyWizard from '~/components/admin/policies/wizard/PolicyWizard.vue'
+
 definePageMeta({ layout: 'admin' })
 </script>
 
