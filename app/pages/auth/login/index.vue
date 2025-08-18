@@ -1,21 +1,34 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '@nuxt/ui';
-import * as v from 'valibot';
+import { z } from 'zod';
 
-const schema = v.object({
-    email: v.pipe(v.string(), v.email('Invalid email')),
-    password: v.pipe(v.string(), v.nonEmpty('Password cannot be empty')),
-})
+const schema = z.object({
+    email: z.email({ message: 'Invalid email address' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters' })
+});
 
-type Schema = v.InferOutput<typeof schema>
+type Schema = z.output<typeof schema>;
 
 const toast = useToast();
+const router = useRouter();
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
-    toast.add({ title: 'Success', description: 'The form has been submitted.', color: 'success' })
-    console.log(event.data)
-}
+    try {
+     await $fetch('/api/auth/login/', {
+        method: 'POST',
+        body: event.data
 
+    });
+    toast.add({ title: 'Success', description: 'Login successful!', color: 'success' });
+    console.log('Login response:', event.data);
+    // Redirect to dashboard or another page after successful login
+    router.push('/admin');
+} catch (error) {
+    toast.add({ title: 'Error', description: 'Login failed. Please check your credentials. \n ' + error, color: 'error' });
+    console.error('Login error:', error);
+    return;
+}
+};
 
 const state = reactive({
     email: '',

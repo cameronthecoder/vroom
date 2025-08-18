@@ -1,5 +1,5 @@
-import { db } from '@/server/db/db';
-import { PolicyService } from '~/server/services/policyService';
+import { db } from '../../db/db';
+import { PolicyService } from '../../services/policyService';
 
 const policyService = new PolicyService(db);
 

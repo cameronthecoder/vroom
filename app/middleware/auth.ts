@@ -1,11 +1,8 @@
 export default defineNuxtRouteMiddleware(async () => {
-    const session = useUserSession();
-
-    console.log("hey there from auth middleware", session);
+    const {loggedIn} = useUserSession();
     
     
-
-    if(!session.loggedIn.value) {
+    if(!loggedIn.value) {
         return navigateTo('/auth/login');
     }
 })

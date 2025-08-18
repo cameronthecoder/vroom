@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { StepperItem, FormSubmitEvent } from '@nuxt/ui';
-import * as v from 'valibot';
+import { z } from 'zod';
 
 const steps = [
     { title: 'Customer information', slot: 'customer_information' as const, description: 'Enter customer details', icon: 'i-heroicons-user' },
@@ -10,12 +10,12 @@ const steps = [
     { title: 'Review & Submit', slot: 'review', description: 'Review and submit the policy', icon: 'i-heroicons-check-circle' }
 ] satisfies StepperItem[];
 
-const schema = v.object({
-  email: v.pipe(v.string(), v.email('Invalid email')),
-  password: v.pipe(v.string(), v.minLength(8, 'Must be at least 8 characters'))
-})
+const schema = z.object({
+    email: z.email({ message: 'Invalid email address' }),
+    password: z.string().min(6, { message: 'Password must be at least 6 characters' })
+});
 
-type Schema = v.InferOutput<typeof schema>
+type Schema = z.output<typeof schema>;
 
 const state = reactive({
   email: '',
