@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'admin' })
+definePageMeta({ layout: 'admin', middleware: 'auth' })
 
 const stats = [
   { label: 'Active Policies', value: 1280, icon: 'i-heroicons-document-text' },

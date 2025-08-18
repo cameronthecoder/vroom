@@ -2,6 +2,8 @@
 import Sidebar  from '~/components/admin/Sidebar.vue'
 import Topbar  from '~/components/admin/Topbar.vue'
 const sidebarOpen = ref(false)
+
+
 </script>
 
 <template>
