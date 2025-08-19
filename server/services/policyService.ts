@@ -1,4 +1,4 @@
-import type { Policies, DB } from '~/types/db';
+import type { Policies, DB } from '../../shared/types/db';
 import type { Insertable, Kysely, Selectable } from 'kysely';
 
 

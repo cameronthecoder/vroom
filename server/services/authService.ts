@@ -1,4 +1,4 @@
-import type { Users, DB } from '~/types/db';
+import type { Users, DB } from '../../shared/types/db';
 import type { Kysely, Selectable } from 'kysely';
 
 

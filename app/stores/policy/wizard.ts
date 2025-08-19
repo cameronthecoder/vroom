@@ -4,7 +4,8 @@ export const useWizardStore = defineStore('wizard', () => {
     const stepper = useTemplateRef('stepper');
 
     const drawers = {
-        currentCustomer: ref(false)
+        currentCustomer: ref(false),
+        newCustomer: ref(false),
     }
 
     const primaryPolicyholderId = ref(null as string | null);
