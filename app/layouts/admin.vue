@@ -3,7 +3,6 @@ import Sidebar  from '~/components/admin/Sidebar.vue'
 import Topbar  from '~/components/admin/Topbar.vue'
 const sidebarOpen = ref(false)
 
-const session = useUserSession()
 
 </script>
 
@@ -21,7 +20,6 @@ const session = useUserSession()
       <Topbar @toggle-sidebar="sidebarOpen = !sidebarOpen" /> 
 
       <UContainer class="py-6">
-        <p>{{ session }}</p>
         <NuxtPage />
       </UContainer>
     </div>

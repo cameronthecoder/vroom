@@ -10,24 +10,27 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const toast = useToast();
-const router = useRouter();
 
 async function onSubmit(event: FormSubmitEvent<Schema>) {
     try {
-     await $fetch('/api/auth/login/', {
-        method: 'POST',
-        body: event.data
+        await $fetch('/api/auth/login/', {
+            method: 'POST',
+            body: event.data
 
-    });
-    toast.add({ title: 'Success', description: 'Login successful!', color: 'success' });
-    console.log('Login response:', event.data);
-    // Redirect to dashboard or another page after successful login
-    router.push('/admin');
-} catch (error) {
-    toast.add({ title: 'Error', description: 'Login failed. Please check your credentials. \n ' + error, color: 'error' });
-    console.error('Login error:', error);
-    return;
-}
+        }).then(async (res) => {
+            toast.add({ title: 'Success', description: 'Login successful!', color: 'success' });
+            console.log('Login response:', res.message);
+            // Redirect to dashboard or another page after successful login
+            console.log('Navigating to /admin');
+            
+            await navigateTo('/admin');
+        });
+        return;
+    } catch (error) {
+        toast.add({ title: 'Error', description: 'Login failed. Please check your credentials. \n ' + error, color: 'error' });
+        console.error('Login error:', error);
+        return;
+    }
 };
 
 const state = reactive({
@@ -48,12 +51,13 @@ const state = reactive({
                     <UForm class="space-y-6" :schema="schema" :state="state" @submit="onSubmit">
                         <div class="space-y-4">
                             <UFormField type="email" label="Email" class="w-full" name="email">
-                                <UInput label="Email address" class="w-full" placeholder="Enter your email" v-model="state.email" />
+                                <UInput label="Email address" class="w-full" placeholder="Enter your email"
+                                    v-model="state.email" />
                             </UFormField>
 
                             <UFormField type="password" name="password" label="Password" class="w-full">
-                                <UInput label="Password" class="w-full" placeholder="Enter your password" type="password"
-                                    v-model="state.password" />
+                                <UInput label="Password" class="w-full" placeholder="Enter your password"
+                                    type="password" v-model="state.password" />
                             </UFormField>
                         </div>
 
