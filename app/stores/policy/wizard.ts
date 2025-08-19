@@ -1,14 +1,16 @@
 import type { StepperItem } from "@nuxt/ui";
+import type { Party } from "~~/server/services/partyService";
 
 export const useWizardStore = defineStore('wizard', () => {
     const stepper = useTemplateRef('stepper');
+
+    const primaryParty = ref<Party | null>(null);
 
     const drawers = {
         currentCustomer: ref(false),
         newCustomer: ref(false),
     }
 
-    const primaryPolicyholderId = ref(null as string | null);
 
     const steps = [
         { title: 'Customer information', slot: 'customer_information' as const, description: 'Enter customer details', icon: 'i-heroicons-user' },
@@ -24,5 +26,5 @@ export const useWizardStore = defineStore('wizard', () => {
         drawers[name].value = true;
     };
 
-    return { stepper, steps, step, primaryPolicyholderId, drawers, openDrawer };
+    return { stepper, steps, step, drawers, openDrawer, primaryParty };
 });

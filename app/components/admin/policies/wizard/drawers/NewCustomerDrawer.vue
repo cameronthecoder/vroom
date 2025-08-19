@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import { useWizardStore } from '~/stores/policy/wizard';
-import type { newCustomerSchema } from '~~/shared/types/zod';
+import { newCustomerSchema } from '~~/shared/types/zod';
 import { US_STATE } from '#imports';
 import type z from 'zod';
+import { createPartyWithCustomer } from '~/services/customerClientService';
 const wizardStore = useWizardStore();
 
 type NewCustomerSchemaType = z.output<typeof newCustomerSchema>;
@@ -12,15 +13,25 @@ const items = US_STATE.options.map((item) => ({
   value: item
 }));
 
-
 const state = reactive<Partial<NewCustomerSchemaType>>({
   first_name: '',
   last_name: '',
   email: '',
   phone: '',
   license_number: '',
-  license_state: ''
+  license_state: US_STATE.enum.MN
 });
+
+const submitForm = async () => {
+  console.log('Submitting form with state:', state);
+  await createPartyWithCustomer(state as NewCustomerSchemaType)
+  .then((response) => {
+    wizardStore.primaryParty = response.data.value;
+  })
+  .catch((error) => {
+    console.error('Error creating customer:', error);
+  })
+}
 
 </script>
 <template>
@@ -29,7 +40,7 @@ const state = reactive<Partial<NewCustomerSchemaType>>({
     title="New Customer" >
     <template #content>
       <p class="text-3xl font-bold my-5 text-center">Create a new customer</p>
-      <UForm :schema="newCustomerSchema" :state="state" class="p-10 overflow-auto h-full">
+      <UForm :schema="newCustomerSchema" :state="state" class="p-10 overflow-auto h-full" @submit="submitForm()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <UFormField label="Email" name="email">
           <UInput v-model="state.email" type="email" class="w-full" size="xl" />
@@ -60,7 +71,7 @@ const state = reactive<Partial<NewCustomerSchemaType>>({
         </UFormField>
         </div>  
 
-        <UButton type="submit" size="xl" class="mt-10 w-full flex items-center justify-center">
+        <UButton type="submit" size="xl" class="mt-10 w-full flex items-center justify-center" >
           Create
         </UButton>
       </UForm>
