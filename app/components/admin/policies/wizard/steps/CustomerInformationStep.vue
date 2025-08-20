@@ -10,11 +10,11 @@ const wizardStore = useWizardStore();
     <p class="text-3xl font-bold my-5 text-center">Please select or create a customer</p>
     <p class="text-lg my-5 text-center text-gray-600">This person will be designated the policholder.</p>
     <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4">
-        <UButton class="col-span-1 p-5 flex items-center justify-center" variant="solid" size="xl" icon="i-lucide-plus" @click="wizardStore.openDrawer('newCustomer')">
+        <UButton class="col-span-1 p-5 flex items-center justify-center" variant="soft" size="xl" icon="i-lucide-plus" @click="wizardStore.openDrawer('newCustomer')">
             New Customer
         </UButton>
         <USeparator orientation="vertical" class="hidden md:block" />
-        <UButton class="col-span-1 p-5 flex items-center justify-center" variant="solid" size="xl" icon="i-lucide-user" @click="wizardStore.openDrawer('currentCustomer')">
+        <UButton class="col-span-1 p-5 flex items-center justify-center" variant="soft" size="xl" icon="i-lucide-user" @click="wizardStore.openDrawer('currentCustomer')">
             Current Customer    
         </UButton>
     </div>
@@ -23,16 +23,17 @@ const wizardStore = useWizardStore();
     </div>
     <div v-else>
         <!-- show policyholder -->
-        <h1 class="text-xl font-bold">Selected</h1>
-        <UCard variant="subtle">
+        <UCard variant="outline">
+            <template #header>
+                <h2 class="text-2xl font-bold">Selected Policyholder</h2>
+            </template>
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.display_name }}</p>
+                    <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>
                     <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.email }}</p>
                     <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.phone }}</p>
                     <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
                 </div>
-                <UButton variant="ghost" size="sm" icon="i-lucide-edit">Edit</UButton>
             </div>
 
             <template #footer>

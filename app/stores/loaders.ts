@@ -1,6 +1,7 @@
 export const useLoadingStore = defineStore('loaders', () => {
     const loaders = {
-        customerLookup: ref(false)
+        customerLookup: ref(false),
+        newCustomer: ref(false)
     }
 
     const setLoader = (name: keyof typeof loaders, value: boolean) => {

@@ -1,14 +1,24 @@
 import type { StepperItem } from "@nuxt/ui";
 
 export const useWizardStore = defineStore('wizard', () => {
-    const stepper = useTemplateRef('stepper');
-
-    const primaryCustomer = ref<CustomerResult | null>(null);
+    const primaryCustomer = ref<CustomerResult | null>();
+    const toast = useToast();
 
     const drawers = {
         currentCustomer: ref(false),
         newCustomer: ref(false),
     }
+
+    watch(primaryCustomer, (newVal) => {
+        if (newVal) {
+        toast.add({
+            title: 'Customer Selected',
+            description: `You have selected ${newVal.first_name} ${newVal.last_name} as the primary policyholder.`,
+            color: 'success'
+        });
+        }
+
+    })
 
 
     const steps = [
@@ -25,5 +35,5 @@ export const useWizardStore = defineStore('wizard', () => {
         drawers[name].value = true;
     };
 
-    return { stepper, steps, step, drawers, openDrawer, primaryCustomer };
+    return { steps, step, drawers, openDrawer, primaryCustomer };
 });

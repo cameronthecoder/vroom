@@ -22,15 +22,21 @@ const state = reactive<Partial<NewCustomerSchemaType>>({
   license_state: US_STATE.enum.MN
 });
 
+const loadersStore = useLoadingStore();
+
 const submitForm = async () => {
-  console.log('Submitting form with state:', state);
+  loadersStore.setLoader('newCustomer', true);
   await createPartyWithCustomer(state as NewCustomerSchemaType)
   .then((response) => {
     wizardStore.primaryCustomer = response.data.value;
+    wizardStore.drawers.newCustomer = false;
   })
   .catch((error) => {
     console.error('Error creating customer:', error);
   })
+  .finally(() => {
+    loadersStore.setLoader('newCustomer', false);
+  });
 }
 
 </script>
@@ -71,7 +77,7 @@ const submitForm = async () => {
         </UFormField>
         </div>  
 
-        <UButton type="submit" size="xl" class="mt-10 w-full flex items-center justify-center" >
+        <UButton :loading="loadersStore.loaders.newCustomer" type="submit" size="xl" class="mt-10 w-full flex items-center justify-center" >
           Create
         </UButton>
       </UForm>
