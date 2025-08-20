@@ -1,18 +1,18 @@
 <script lang="ts" setup> 
 import { useWizardStore } from '~/stores/policy/wizard';
-import { useDebouncedSearch, type CustomerSearchResult } from '#imports';
+import { useDebouncedSearch, type CustomerResult } from '#imports';
 import { searchCustomers } from '~/services/customerClientService';
 import type { CommandPaletteItem } from '@nuxt/ui';
 
 
 const wizardStore = useWizardStore();
-
-const results = ref<CommandPaletteItem[] & CustomerSearchResult[]>([]);
+const loadersStore = useLoadingStore();
+const results = ref<CommandPaletteItem[] & CustomerResult[]>([]);
 
 const groups = computed(() => [
   {
     id: 'customers',
-    label: 'Customers',
+    label: searchTerm.value ? `Customers matching “${searchTerm.value}”...` : 'Users',
     items: results.value
   }
 ])
@@ -21,17 +21,20 @@ const searchTerm = ref('');
 
 const callAPI = async (query: string): Promise<void> => {
     try {
+        loadersStore.setLoader('customerLookup', true);
         const response = await searchCustomers(query);
+        loadersStore.setLoader('customerLookup', false);
         if (response?.data?.value) {
             results.value = response.data.value.map((customer) => ({
                 party_id: customer.party_id,
-                label: customer.display_name,
+                label: (customer.last_name.toUpperCase() + ', ' + customer.first_name.toUpperCase()).trim(),
                 icon: 'i-lucide-user',
                 name: customer.display_name,
                 display_name: customer.display_name,
                 first_name: customer.first_name,
                 last_name: customer.last_name,
                 email: customer.email,
+                suffix: customer.license_state + '-' + customer.license_number,
                 phone: customer.phone,
                 license_number: customer.license_number,
                 license_state: customer.license_state,
@@ -41,6 +44,7 @@ const callAPI = async (query: string): Promise<void> => {
         }
         console.log('Search results:', results.value);
     } catch (error) {
+      loadersStore.setLoader('customerLookup', false);
         console.error('Error fetching search results:', error);
     }
 }
@@ -57,11 +61,12 @@ watch (searchTerm, (newQuery) => {
 </script>
 <template>
 
-<UDrawer v-model:open="wizardStore.drawers.currentCustomer">
+<UDrawer v-model:open="wizardStore.drawers.currentCustomer" class="md:mx-50" title="Select Customer">
     <template #content>
         <UCommandPalette
         v-model:search-term="searchTerm"
-        :loading="false"
+        v-model="wizardStore.primaryCustomer"
+        :loading="loadersStore.loaders.customerLookup"
         :groups="groups"
         placeholder="Search customers..."
         class="h-80"

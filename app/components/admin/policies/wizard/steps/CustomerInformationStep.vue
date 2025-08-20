@@ -6,7 +6,7 @@ const wizardStore = useWizardStore();
 
 </script>
 <template>
-    <div v-if="!wizardStore.primaryParty">
+    <div v-if="!wizardStore.primaryCustomer">
     <p class="text-3xl font-bold my-5 text-center">Please select or create a customer</p>
     <p class="text-lg my-5 text-center text-gray-600">This person will be designated the policholder.</p>
     <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4">
@@ -23,12 +23,23 @@ const wizardStore = useWizardStore();
     </div>
     <div v-else>
         <!-- show policyholder -->
-        <UCard>
-            <template #header>
-                <h1 class="text-2xl font-bold">Policyholder Primary Party</h1>
+        <h1 class="text-xl font-bold">Selected</h1>
+        <UCard variant="subtle">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.display_name }}</p>
+                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.email }}</p>
+                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.phone }}</p>
+                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
+                </div>
+                <UButton variant="ghost" size="sm" icon="i-lucide-edit">Edit</UButton>
+            </div>
+
+            <template #footer>
+                <UButton variant="outline" size="lg" color="warning" class="w-full mt-5" @click="wizardStore.primaryCustomer = null">
+                    Incorrect customer? Select another
+                </UButton>
             </template>
-                <p class="text-lg">You have selected {{ wizardStore.primaryParty?.display_name }} as the policyholder.</p>
-            
         </UCard>
     </div>
 </template>

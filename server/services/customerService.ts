@@ -1,5 +1,5 @@
-import type { DB } from '../../shared/types/db';
-import type { CustomerSearchResult } from '../../shared/types/queries';
+import type { DB, People } from '../../shared/types/db';
+import type { CustomerResult } from '../../shared/types/queries';
 import type { Kysely, Selectable, Transaction } from 'kysely';
 import { type Party, PartyService } from './partyService';
 import type { z } from 'zod';
@@ -13,7 +13,7 @@ export class CustomerService {
         this.partyService = new PartyService(db);
     }
 
-    async searchCustomers(query: string): Promise<Selectable<CustomerSearchResult>[]> {
+    async searchCustomers(query: string): Promise<Selectable<CustomerResult>[]> {
         return await this.db.selectFrom('people')
         .innerJoin('parties', 'people.party_id', 'parties.id')
         .select([
@@ -40,6 +40,20 @@ export class CustomerService {
         .execute();
     }
 
+    static toCustomerResult(person: Selectable<People>, party: Selectable<Party>): CustomerResult {
+        return {
+            party_id: party.id,
+            name: party.name,
+            display_name: party.display_name,
+            first_name: person.first_name,
+            last_name: person.last_name,
+            email: person.email,
+            phone: person.phone,
+            license_number: person.license_number,
+            license_state: person.license_state
+        };
+    }
+
     async createPersonForParty(partyId: string, customer: z.infer<typeof newCustomerSchema>, trx?: Transaction<DB>): Promise<Selectable<DB['people']>> {
         const db = trx ?? this.db;
         const newPerson = await db.insertInto('people').values({
@@ -55,11 +69,11 @@ export class CustomerService {
         return newPerson;
     }
 
-    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema>): Promise<Selectable<Party>> {
+    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema>): Promise<Selectable<CustomerSearchResult>> {
         return await this.db.transaction().execute(async (tx) => {
             const party: Party = await this.partyService.createPartyFromCustomer(customer, tx);
-            await this.createPersonForParty(party.id, customer, tx);
-            return party;
+            const person: Person = await this.createPersonForParty(party.id, customer, tx);
+            return CustomerService.toCustomerResult(person, party);
         });
     }
 }

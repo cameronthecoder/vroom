@@ -26,7 +26,7 @@ const submitForm = async () => {
   console.log('Submitting form with state:', state);
   await createPartyWithCustomer(state as NewCustomerSchemaType)
   .then((response) => {
-    wizardStore.primaryParty = response.data.value;
+    wizardStore.primaryCustomer = response.data.value;
   })
   .catch((error) => {
     console.error('Error creating customer:', error);

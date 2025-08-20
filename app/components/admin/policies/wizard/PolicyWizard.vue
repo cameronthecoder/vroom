@@ -8,9 +8,9 @@ const wizardStore = useWizardStore();
 <template>
     <div>
         <UCard>
-            <UStepper ref="wizardStore.stepper" v-model="wizardStore.step" :items="wizardStore.steps" class="w-full">
+            <UStepper ref="wizardStore.stepper"  v-model="wizardStore.step" :items="wizardStore.steps">
                 <template #customer_information>
-                    <div class="p-4">
+                    <div>
                         <CustomerInformationStep />
                     </div>
                 </template>
