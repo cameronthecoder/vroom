@@ -1,4 +1,3 @@
-// services/policyClient.ts
 import type { AsyncData } from '#app'
 import type { FetchError } from 'ofetch'
 import type { Selectable } from 'kysely'

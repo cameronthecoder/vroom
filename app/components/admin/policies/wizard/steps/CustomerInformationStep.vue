@@ -1,14 +1,16 @@
 <script lang="ts" setup>
 import { useWizardStore } from '~/stores/policy/wizard';
 import CurrentCustomerDrawer from '../drawers/CurrentCustomerDrawer.vue';
+import NewPolicyModal from '../modals/NewPolicyModal.vue';
 import NewCustomerDrawer from '../drawers/NewCustomerDrawer.vue';
 const wizardStore = useWizardStore();
 
 </script>
 <template>
+    <NewPolicyModal />
     <div v-if="!wizardStore.primaryCustomer">
     <p class="text-3xl font-bold my-5 text-center">Please select or create a customer</p>
-    <p class="text-lg my-5 text-center text-gray-600">This person will be designated the policholder.</p>
+    <p class="text-lg my-5 text-center text-gray-600">This person will be designated the policyholder.</p>
     <div class="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] gap-4">
         <UButton class="col-span-1 p-5 flex items-center justify-center" variant="soft" size="xl" icon="i-lucide-plus" @click="wizardStore.openDrawer('newCustomer')">
             New Customer
@@ -27,6 +29,27 @@ const wizardStore = useWizardStore();
             <template #header>
                 <h2 class="text-2xl font-bold">Selected Policyholder</h2>
             </template>
+
+            <UAlert
+                title="DUPLICATE POLICY WARNING"
+                color="warning"
+                class="mb-5"
+                description="This customer already has a pending, unfinished policy. Please complete or cancel that policy before creating a new one."
+                icon="i-lucide-alert-triangle"
+                :actions="[
+      {
+        label: 'View Policy',
+        color: 'neutral',
+        variant: 'soft'
+      },
+        {
+            label: 'Cancel Policy',
+            color: 'neutral',
+            variant: 'soft'
+        }
+    ]"
+            />
+
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>

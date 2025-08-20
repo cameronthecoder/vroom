@@ -69,7 +69,7 @@ export class CustomerService {
         return newPerson;
     }
 
-    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema>): Promise<Selectable<CustomerSearchResult>> {
+    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema>): Promise<Selectable<CustomerResult>> {
         return await this.db.transaction().execute(async (tx) => {
             const party: Party = await this.partyService.createPartyFromCustomer(customer, tx);
             const person: Person = await this.createPersonForParty(party.id, customer, tx);

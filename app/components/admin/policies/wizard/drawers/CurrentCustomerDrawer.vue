@@ -13,7 +13,8 @@ const groups = computed(() => [
   {
     id: 'customers',
     label: searchTerm.value ? `Customers matching “${searchTerm.value}”...` : 'Users',
-    items: results.value
+    items: results.value,
+    ignoreFilter: true
   }
 ])
 

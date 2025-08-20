@@ -1,13 +1,25 @@
 import type { StepperItem } from "@nuxt/ui";
+import type { Policies } from '~~/shared/types/db'
+import type { Selectable } from 'kysely'
 
 export const useWizardStore = defineStore('wizard', () => {
     const primaryCustomer = ref<CustomerResult | null>();
     const toast = useToast();
+    const currentPolicy = ref<Selectable<Policies> | null>(null);
 
     const drawers = {
         currentCustomer: ref(false),
         newCustomer: ref(false),
     }
+
+    const modals = {
+        newPolicyCreation: ref(false)
+    }
+
+    watch(modals.newPolicyCreation, (newVal) => {   
+        console.log('New Policy Creation Modal:', newVal);
+        
+    });
 
     watch(primaryCustomer, (newVal) => {
         if (newVal) {
@@ -35,5 +47,5 @@ export const useWizardStore = defineStore('wizard', () => {
         drawers[name].value = true;
     };
 
-    return { steps, step, drawers, openDrawer, primaryCustomer };
+    return { steps, step, drawers, openDrawer, primaryCustomer, currentPolicy, modals };
 });

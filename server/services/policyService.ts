@@ -1,23 +1,33 @@
-import type { Policies, DB } from '../../shared/types/db';
+import type { Policies, DB, PolicyParties, PolicyPartyRole } from '../../shared/types/db';
 import type { Insertable, Kysely, Selectable } from 'kysely';
 
+type Policy = Selectable<Policies>
+type PolicyPartyRow = Selectable<PolicyParties>
 
 export class PolicyService {
-    constructor(private db: Kysely<DB>) {}
+    constructor(private db: Kysely<DB>) { }
 
-    async getPolicies(): Promise<Selectable<Policies>[]> {
+    async getPolicies(): Promise<Policy[]> {
         return await this.db.selectFrom('policies').selectAll().execute();
     }
 
-    async getPolicyById(id: string): Promise<Selectable<Policies> | undefined> {
+    async getPolicyById(id: string): Promise<Policy | undefined> {
         return await this.db.selectFrom('policies').selectAll().where('id', '=', id).executeTakeFirst();
     }
 
-    async createPolicy(policy: Insertable<Policies>): Promise<Selectable<Policies>> {
-        const [newPolicy] = await this.db.insertInto('policies').values(policy).returningAll().execute();
-        if (!newPolicy) {
-            throw new Error('Failed to create policy');
-        }
+    async createPolicy(policy: Insertable<Policies>): Promise<Policy | undefined> {
+        const newPolicy = await this.db.insertInto('policies').values(policy).returningAll().executeTakeFirst();
         return newPolicy;
+    }
+
+    async attachCustomerToPolicy(policy: Policy, partyId: string): Promise<PolicyPartyRow | undefined> {
+        const attachment = await this.db.insertInto('policy_parties').values({
+            policy_id: policy.id,
+            party_id: partyId,
+            role: "NAMED_INSURED" as PolicyPartyRole,
+            effective_at: policy.effective_at,
+            expires_at: policy.expires_at
+        }).returningAll().executeTakeFirst();
+        return attachment;
     }
 }

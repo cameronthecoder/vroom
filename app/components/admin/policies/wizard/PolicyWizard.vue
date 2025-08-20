@@ -8,33 +8,106 @@ const stepper = useTemplateRef('stepper');
 
 const toast = useToast();
 
-const conditions: Array<() => boolean> = [
+const enum STEP_RESPONSE {
+    CAN_PROCEED = 'CAN_PROCEED',
+    CANNOT_PROCEED = 'CANNOT_PROCEED',
+    ACTION_REQUIRED = 'ACTION_REQUIRED',
+    CANNOT_GO_BACK = 'CANNOT_GO_BACK',
+}
+
+const enum DIRECTION {
+    FORWARD = 'FORWARD',
+    BACKWARD = 'BACKWARD',
+}
+
+const conditions: Array<(direction: DIRECTION) => STEP_RESPONSE> = [
     // Step 0 condition
-    () => wizardStore.primaryCustomer !== null,
+    (direction: DIRECTION) => { 
+        // if a policy has already been created, YOU CANNOT GO BACK
+        if (wizardStore.primaryCustomer && wizardStore.currentPolicy === null && direction === DIRECTION.FORWARD) {
+            wizardStore.modals.newPolicyCreation = true;
+            console.log('Primary customer exists but no current policy, opening modal');
+            return STEP_RESPONSE.ACTION_REQUIRED;
+        } else if (!wizardStore.primaryCustomer) {
+            console.log('No primary customer selected, cannot proceed');
+            return STEP_RESPONSE.CANNOT_PROCEED;
+        } else {
+            return STEP_RESPONSE.CAN_PROCEED;
+        }
+    },
     // Step 1 condition
-    () => (1 + 1) === 2, // Placeholder for actual condition
+    (direction: DIRECTION) => {
+        if (wizardStore.currentPolicy && direction == DIRECTION.BACKWARD) {
+            toast.add({
+                title: 'Cannot go back',
+                description: 'This policy has been created for the customer. You can’t go back to customer selection. To make changes, cancel this policy and start again.',
+                color: 'warning',
+                icon: 'i-lucide-alert-triangle'
+            });
+            return STEP_RESPONSE.CANNOT_GO_BACK;
+        }
+        return STEP_RESPONSE.CAN_PROCEED;
+    }, // Placeholder for actual condition
     // Step 2 condition
-    () => (1 + 1) ==  2,
+    (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
+    (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
+    (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
+
 ]
 
-const canProceed = computed(() => {
-  return conditions[wizardStore.step]?.() ?? false
-})
+const validateCurrentStep = (direction: DIRECTION): STEP_RESPONSE => {
+  return conditions[wizardStore.step]?.(direction) || STEP_RESPONSE.CANNOT_PROCEED;
+}
+
+// A policy and a primary customer are required to proceed from step 0 to step 2
+
 
 const nextStep = () => {
-    if (canProceed.value) {
-        stepper.value?.next();
-    } else {
-        toast.add({
-            title: 'Cannot proceed',
-            description: 'Please fill out the required fields before proceeding.',
-            color: 'warning',
-        });
+    const stepResponse = validateCurrentStep(DIRECTION.FORWARD);
+    switch (stepResponse) {
+        case STEP_RESPONSE.CAN_PROCEED:
+            console.log('Proceeding to next step');
+            stepper.value?.next();
+            break;
+        case STEP_RESPONSE.CANNOT_PROCEED:
+            toast.add({
+                title: 'Cannot proceed',
+                description: 'Please complete the required steps before proceeding.',
+                color: 'warning',
+                icon: 'i-lucide-alert-triangle'
+            });
+            break;
+        case STEP_RESPONSE.ACTION_REQUIRED:
+            console.log('Action required before proceeding');
+            break;
+        case STEP_RESPONSE.CANNOT_GO_BACK:
+            toast.add({
+                title: 'Something went wrong',
+                description: 'This should not happen. Please contact support.',
+                color: 'warning',
+                icon: 'i-lucide-alert-triangle'
+            });
+            break;
+        default:
+            console.error('Unknown step response');
+            break;
     }
 }
 
-const black = () => {
-    stepper.value?.prev();
+const back = () => {
+    const stepResponse = validateCurrentStep(DIRECTION.BACKWARD);
+    console.log(stepResponse);
+    
+    switch (stepResponse) {
+        case STEP_RESPONSE.CAN_PROCEED:
+            stepper.value?.prev();
+            break;
+        case STEP_RESPONSE.CANNOT_GO_BACK:
+            break;
+        default:
+            console.error('Unknown step response');
+            break;
+    }
 }
 
 </script>
@@ -57,7 +130,7 @@ const black = () => {
 
             <template #footer>
                 <div class="flex gap-5 justify-end">
-                    <UButton variant="outline" size="xl" class="mt-5 p-5" :disabled="wizardStore.step == 0" @click="black()">
+                    <UButton variant="outline" size="xl" class="mt-5 p-5" :disabled="wizardStore.step == 0" @click="back()">
                     Back
                 </UButton>
                 <UButton variant="solid"  size="xl" color="primary" class="p-5 mt-5" @click="nextStep()">
