@@ -14,9 +14,11 @@ export const searchCustomers = async (query: string): Promise<SearchResponse> =>
 }
 
 export const createPartyWithCustomer = async (customer: z.infer<typeof newCustomerSchema>): Promise<AsyncData<CustomerResult, FetchError | undefined>> => {
+  console.log(customer);
+  
   return await useFetch<Selectable<CustomerResult>>('/api/customers', {
     method: 'POST',
-    body: customer,
+    body: {...customer, license_state: US_STATE.parse(customer.license_state)},
     server: false,
     default: () => ({} as Selectable<CustomerResult>)
   })

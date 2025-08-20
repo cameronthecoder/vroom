@@ -10,8 +10,12 @@ type NewCustomerSchemaType = z.output<typeof newCustomerSchema>;
 
 const items = US_STATE.options.map((item) => ({
   label: item,
-  value: item
+  value: item,
+  parsed: US_STATE.parse(item),
 }));
+
+console.log(items);
+
 
 const state = reactive<Partial<NewCustomerSchemaType>>({
   first_name: '',
@@ -19,8 +23,9 @@ const state = reactive<Partial<NewCustomerSchemaType>>({
   email: '',
   phone: '',
   license_number: '',
-  license_state: US_STATE.enum.MN
+  license_state: US_STATE.parse('AL'), // Default to Alabama
 });
+
 
 const loadersStore = useLoadingStore();
 
@@ -46,6 +51,7 @@ const submitForm = async () => {
     title="New Customer" >
     <template #content>
       <p class="text-3xl font-bold my-5 text-center">Create a new customer</p>
+      <p>{{ state.license_state }}</p>
       <UForm :schema="newCustomerSchema" :state="state" class="p-10 overflow-auto h-full" @submit="submitForm()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
         <UFormField label="Email" name="email">
@@ -66,7 +72,7 @@ const submitForm = async () => {
         </UFormField>
 
         <UFormField label="License State" name="license_state">
-          <USelectMenu :v-model="state.license_state" :search-input="{
+          <USelectMenu v-model="state.license_state" value-key="parsed" :search-input="{
             placeholder: 'Filter...',
             icon: 'i-lucide-search'
           }" :items="items" size="xl" placeholder="Select a state" class="w-full" />

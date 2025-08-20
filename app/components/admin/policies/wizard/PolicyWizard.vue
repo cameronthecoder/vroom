@@ -23,7 +23,6 @@ const enum DIRECTION {
 const conditions: Array<(direction: DIRECTION) => STEP_RESPONSE> = [
     // Step 0 condition
     (direction: DIRECTION) => { 
-        // if a policy has already been created, YOU CANNOT GO BACK
         if (wizardStore.primaryCustomer && wizardStore.currentPolicy === null && direction === DIRECTION.FORWARD) {
             wizardStore.modals.newPolicyCreation = true;
             console.log('Primary customer exists but no current policy, opening modal');
@@ -47,8 +46,8 @@ const conditions: Array<(direction: DIRECTION) => STEP_RESPONSE> = [
             return STEP_RESPONSE.CANNOT_GO_BACK;
         }
         return STEP_RESPONSE.CAN_PROCEED;
-    }, // Placeholder for actual condition
-    // Step 2 condition
+    },
+    // TODO: Add conditions for other steps
     (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
     (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
     (_direction: DIRECTION) => STEP_RESPONSE.CAN_PROCEED,
