@@ -3,7 +3,20 @@ import { useWizardStore } from '~/stores/policy/wizard';
 import CurrentCustomerDrawer from '../drawers/CurrentCustomerDrawer.vue';
 import NewPolicyModal from '../modals/NewPolicyModal.vue';
 import NewCustomerDrawer from '../drawers/NewCustomerDrawer.vue';
+import type { TabsItem } from '@nuxt/ui';
 const wizardStore = useWizardStore();
+
+const items = ref<TabsItem[]>([
+  {
+    label: 'Claims'
+  },
+  {
+    label: 'Payments'
+  },
+  {
+    label: 'Existing Policies'
+  }
+]);
 
 </script>
 <template>
@@ -50,14 +63,18 @@ const wizardStore = useWizardStore();
     ]"
             />
 
-            <div class="flex items-center justify-between">
-                <div>
+           
+
+            <div class="space-y-3 mb-3">
                     <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>
-                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.email }}</p>
-                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.phone }}</p>
-                    <p class="text-sm text-gray-600">{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
-                </div>
+                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-mail" size="15"></UIcon> {{ wizardStore.primaryCustomer.email }}</p>
+                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-phone" size="15"></UIcon> {{ wizardStore.primaryCustomer.phone }}</p>
+                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-car-front" size="15"></UIcon>{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
             </div>
+
+            <USeparator type="dashed" />
+
+            <UTabs size="md" variant="pill" :content="false" :items="items" class="w-full mt-10" />
 
             <template #footer>
                 <UButton variant="outline" size="lg" color="warning" class="w-full mt-5" @click="wizardStore.primaryCustomer = null">

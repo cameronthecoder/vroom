@@ -115,7 +115,7 @@ const back = () => {
 <template>
     <div>
         <UCard>
-            <UStepper ref="stepper"  v-model="wizardStore.step" :items="wizardStore.steps">
+            <UStepper ref="stepper" disabled  v-model="wizardStore.step" :items="wizardStore.steps">
                 <template #customer_information>
                     <div>
                         <CustomerInformationStep />
