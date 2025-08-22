@@ -5,6 +5,16 @@
 
 import type { ColumnType } from "kysely";
 
+export type ArrayType<T> = ArrayTypeImpl<T> extends (infer U)[]
+  ? U[]
+  : ArrayTypeImpl<T>;
+
+export type ArrayTypeImpl<T> = T extends ColumnType<infer S, infer I, infer U>
+  ? ColumnType<S[], I[], U[]>
+  : T[];
+
+export type ClaimantRole = "ADJUSTER" | "CLAIMANT" | "OTHER" | "POLICE_OFFICER" | "WITNESS";
+
 export type ClaimStatus = "CLOSED" | "DENIED" | "IN_REVIEW" | "OPEN" | "SETTLED";
 
 export type Generated<T> = T extends ColumnType<infer S, infer I, infer U>
@@ -33,6 +43,8 @@ export type PolicyStatus = "ACTIVE" | "CANCELLED" | "INACTIVE" | "PENDING";
 
 export type Timestamp = ColumnType<Date, Date | string, Date | string>;
 
+export type UserRoles = "ADMIN" | "AGENT" | "CUSTOMER";
+
 export type VehiclePartyRole = "ADDITIONAL_DRIVER" | "CONTACT" | "EXCLUDED_DRIVER" | "LESSEE" | "LESSOR" | "LIENHOLDER" | "OWNER" | "PRIMARY_DRIVER";
 
 export type VehicleUse = "COMMERCIAL" | "FARM" | "PERSONAL" | "RECREATIONAL";
@@ -42,7 +54,7 @@ export interface ClaimParty {
   email: string | null;
   id: string;
   name: string | null;
-  party_type: string;
+  party_type: ClaimantRole;
   person_id: string | null;
   phone: string | null;
 }
@@ -66,7 +78,7 @@ export interface ClaimVehicle {
 }
 
 export interface CoverageSelection {
-  amount_cents: Int8;
+  amount_cents: Int8 | null;
   coverage_code: string;
   effective_at: Timestamp;
   expires_at: Timestamp;
@@ -84,6 +96,15 @@ export interface CoverageTypes {
   unit: string;
 }
 
+export interface Organizations {
+  created_at: Generated<Timestamp>;
+  legal_name: string;
+  party_id: string;
+  tax_id: string | null;
+  updated_at: Generated<Timestamp>;
+  user_id: string | null;
+}
+
 export interface Parties {
   created_at: Generated<Timestamp>;
   display_name: string;
@@ -93,7 +114,6 @@ export interface Parties {
 
 export interface People {
   created_at: Generated<Timestamp>;
-  email: string;
   first_name: string;
   last_name: string;
   license_number: string | null;
@@ -131,6 +151,7 @@ export interface Users {
   id: Generated<string>;
   last_name: string;
   password_hash: string;
+  roles: Generated<ArrayType<UserRoles>>;
   updated_at: Generated<Timestamp>;
 }
 
@@ -161,6 +182,7 @@ export interface DB {
   claims: Claims;
   coverage_selection: CoverageSelection;
   coverage_types: CoverageTypes;
+  organizations: Organizations;
   parties: Parties;
   people: People;
   policies: Policies;

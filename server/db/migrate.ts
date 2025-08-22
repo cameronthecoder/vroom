@@ -4,24 +4,22 @@ import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { FileMigrationProvider, Migrator } from 'kysely'
 
-async function main() {
-
-    console.log(path.join(process.cwd(), '/app/server/db/migrations'));
+async function main() {    
 
     const migrator = new Migrator({
         db,
         provider: new FileMigrationProvider({
             fs,
             path,
-            migrationFolder: path.join(process.cwd(), '/app/server/db/migrations/'),
+            migrationFolder: path.join(process.cwd(), '/server/db/migrations/'),
         }),
     })
 
-    console.log('Found files:', await fs.readdir(path.join(process.cwd(), '/app/server/db/migrations/')))
+    console.log('Found files:', await fs.readdir(path.join(process.cwd(), '/server/db/migrations/')))
 
     const { error, results } = await migrator.migrateToLatest()
 
-    console.log(results);
+    
     
 
     results?.forEach(r => {

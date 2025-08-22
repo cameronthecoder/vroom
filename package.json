@@ -8,14 +8,15 @@
     "generate": "nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
-    "migrate": "tsx ./app/server/db/migrate.ts",
-    "migrate:down": "tsx ./app/server/db/migrate-down.ts"
+    "migrate": "tsx ./server/db/migrate.ts",
+    "migrate:down": "tsx ./server/db/migrate-down.ts"
   },
   "dependencies": {
     "@nuxt/eslint": "1.8.0",
     "@nuxt/image": "1.11.0",
     "@nuxt/ui": "3.3.2",
     "@pinia/nuxt": "0.11.2",
+    "dotenv": "^17.2.1",
     "eslint": "^9.0.0",
     "jose": "^6.0.12",
     "kysely": "^0.28.5",

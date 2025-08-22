@@ -8,13 +8,16 @@ const wizardStore = useWizardStore();
 
 const items = ref<TabsItem[]>([
   {
-    label: 'Claims'
+    label: 'Claims',
+    icon: 'i-lucide-file-text',
   },
   {
-    label: 'Payments'
+    label: 'Payments',
+    icon: 'i-lucide-credit-card',
   },
   {
-    label: 'Existing Policies'
+    label: 'Existing Policies',
+    icon: 'i-lucide-file'
   }
 ]);
 
@@ -38,38 +41,42 @@ const items = ref<TabsItem[]>([
     </div>
     <div v-else>
         <!-- show policyholder -->
-        <UCard variant="outline">
+        <UCard variant="outline" class="mx-30 my-5">
             <template #header>
-                <h2 class="text-2xl font-bold">Selected Policyholder</h2>
+                <h2 class="text-2xl font-bold">Parties</h2>
             </template>
 
             <UAlert
                 title="DUPLICATE POLICY WARNING"
+                v-if="false"
                 color="warning"
                 class="mb-5"
                 description="This customer already has a pending, unfinished policy. Please complete or cancel that policy before creating a new one."
                 icon="i-lucide-alert-triangle"
                 :actions="[
-      {
-        label: 'View Policy',
-        color: 'neutral',
-        variant: 'soft'
-      },
-        {
-            label: 'Cancel Policy',
-            color: 'neutral',
-            variant: 'soft'
-        }
-    ]"
-            />
+                    {
+                        label: 'View Policy',
+                        color: 'neutral',
+                        variant: 'soft'
+                    },
+                        {
+                            label: 'Cancel Policy',
+                            color: 'neutral',
+                            variant: 'soft'
+                        }
+                ]"
+                />
 
            
 
             <div class="space-y-3 mb-3">
-                    <p class="text-lg font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>
-                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-mail" size="15"></UIcon> {{ wizardStore.primaryCustomer.email }}</p>
-                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-phone" size="15"></UIcon> {{ wizardStore.primaryCustomer.phone }}</p>
-                    <p class="text-sm text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-car-front" size="15"></UIcon>{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
+                <div>
+                    <p class="text-xs tracking-widest font-bold text-primary">NAMED INSURED</p>
+                    <p class="text-2xl font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>
+                </div>
+                    <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-mail" size="15"></UIcon> {{ wizardStore.primaryCustomer.email }}</p>
+                    <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-phone" size="15"></UIcon> {{ wizardStore.primaryCustomer.phone }}</p>
+                    <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-car-front" size="15"></UIcon>{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
             </div>
 
             <USeparator type="dashed" />
@@ -77,7 +84,7 @@ const items = ref<TabsItem[]>([
             <UTabs size="md" variant="pill" :content="false" :items="items" class="w-full mt-10" />
 
             <template #footer>
-                <UButton variant="outline" size="lg" color="warning" class="w-full mt-5" @click="wizardStore.primaryCustomer = null">
+                <UButton variant="soft" size="lg" color="warning" icon="i-lucide-arrow-left" class="mt-5" @click="wizardStore.primaryCustomer = null">
                     Incorrect customer? Select another
                 </UButton>
             </template>
