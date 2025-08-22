@@ -22,7 +22,6 @@ export class CustomerService {
             'parties.display_name',
             'people.first_name',
             'people.last_name',
-            'people.email',
             'people.phone',
             'people.license_number',
             'people.license_state'
@@ -31,7 +30,6 @@ export class CustomerService {
             eb.or([
                 eb('people.first_name', 'ilike', `%${query}%`),
                 eb('people.last_name', 'ilike', `%${query}%`),
-                eb('people.email', 'ilike', `%${query}%`),
                 eb('parties.name', 'ilike', `%${query}%`),
                 eb('people.license_number', '=', query)
             ])
@@ -47,7 +45,6 @@ export class CustomerService {
             display_name: party.display_name,
             first_name: person.first_name,
             last_name: person.last_name,
-            email: person.email,
             phone: person.phone,
             license_number: person.license_number,
             license_state: person.license_state
@@ -60,7 +57,6 @@ export class CustomerService {
             party_id: partyId,
             first_name: customer.first_name,
             last_name: customer.last_name,
-            email: customer.email,
             phone: customer.phone,
             license_number: customer.license_number,
             license_state: customer.license_state,
