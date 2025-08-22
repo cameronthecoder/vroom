@@ -1,10 +1,11 @@
 import type { DB, People } from '../../shared/types/db';
 import type { CustomerResult } from '../../shared/types/queries';
-import type { Kysely, Selectable, Transaction } from 'kysely';
+import type { Kysely, Insertable, Selectable, Transaction } from 'kysely';
 import { type Party, PartyService } from './partyService';
 import type { z } from 'zod';
 
 export type Person = Selectable<People>
+export type Address = Selectable<Addresses>
 
 export class CustomerService {
     private partyService: PartyService;
@@ -65,10 +66,11 @@ export class CustomerService {
         return newPerson;
     }
 
-    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema>): Promise<Selectable<CustomerResult>> {
+    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema> & {address: Insertable<Addresses>}): Promise<Selectable<CustomerResult>> {
         return await this.db.transaction().execute(async (tx) => {
             const party: Party = await this.partyService.createPartyFromCustomer(customer, tx);
             const person: Person = await this.createPersonForParty(party.id, customer, tx);
+            const address: Address = await this.addressService.createAddressForParty(party.id, customer.address, tx);
             return CustomerService.toCustomerResult(person, party);
         });
     }

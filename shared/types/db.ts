@@ -5,6 +5,10 @@
 
 import type { ColumnType } from "kysely";
 
+export type AddressRole = "BILLING" | "CLAIM_SCENE" | "GARAGING" | "MAILING" | "OTHER" | "PHYSICAL" | "REPAIR_SHOP" | "TOW_YARD";
+
+export type AddressStatus = "ACTIVE" | "ARCHIVED" | "INACTIVE";
+
 export type ArrayType<T> = ArrayTypeImpl<T> extends (infer U)[]
   ? U[]
   : ArrayTypeImpl<T>;
@@ -48,6 +52,29 @@ export type UserRoles = "ADMIN" | "AGENT" | "CUSTOMER";
 export type VehiclePartyRole = "ADDITIONAL_DRIVER" | "CONTACT" | "EXCLUDED_DRIVER" | "LESSEE" | "LESSOR" | "LIENHOLDER" | "OWNER" | "PRIMARY_DRIVER";
 
 export type VehicleUse = "COMMERCIAL" | "FARM" | "PERSONAL" | "RECREATIONAL";
+
+export interface Addresses {
+  city: string;
+  country: Generated<string>;
+  created_at: Generated<Timestamp>;
+  id: string;
+  latitude: Numeric | null;
+  line1: string;
+  line2: string | null;
+  longitude: Numeric | null;
+  postal_code: string;
+  state: string;
+  status: Generated<AddressStatus>;
+  updated_at: Generated<Timestamp>;
+}
+
+export interface ClaimAddresses {
+  address_id: string;
+  claim_id: string;
+  effective_at: Generated<Timestamp>;
+  expires_at: Generated<Timestamp>;
+  role: Generated<AddressRole>;
+}
 
 export interface ClaimParty {
   claim_id: string | null;
@@ -112,6 +139,14 @@ export interface Parties {
   name: string;
 }
 
+export interface PartyAddresses {
+  address_id: string;
+  effective_at: Generated<Timestamp>;
+  expires_at: Generated<Timestamp>;
+  party_id: string;
+  role: Generated<AddressRole>;
+}
+
 export interface People {
   created_at: Generated<Timestamp>;
   first_name: string;
@@ -136,6 +171,14 @@ export interface Policies {
   updated_at: Generated<Timestamp>;
 }
 
+export interface PolicyAddresses {
+  address_id: string;
+  effective_at: Generated<Timestamp>;
+  expires_at: Generated<Timestamp>;
+  policy_id: string;
+  role: Generated<AddressRole>;
+}
+
 export interface PolicyParties {
   effective_at: Timestamp;
   expires_at: Timestamp;
@@ -153,6 +196,14 @@ export interface Users {
   password_hash: string;
   roles: Generated<ArrayType<UserRoles>>;
   updated_at: Generated<Timestamp>;
+}
+
+export interface VehicleAddresses {
+  address_id: string;
+  effective_at: Generated<Timestamp>;
+  expires_at: Generated<Timestamp>;
+  role: Generated<AddressRole>;
+  vehicle_id: string;
 }
 
 export interface VehicleParties {
@@ -177,6 +228,8 @@ export interface Vehicles {
 }
 
 export interface DB {
+  addresses: Addresses;
+  claim_addresses: ClaimAddresses;
   claim_party: ClaimParty;
   claim_vehicle: ClaimVehicle;
   claims: Claims;
@@ -184,10 +237,13 @@ export interface DB {
   coverage_types: CoverageTypes;
   organizations: Organizations;
   parties: Parties;
+  party_addresses: PartyAddresses;
   people: People;
   policies: Policies;
+  policy_addresses: PolicyAddresses;
   policy_parties: PolicyParties;
   users: Users;
+  vehicle_addresses: VehicleAddresses;
   vehicle_parties: VehicleParties;
   vehicles: Vehicles;
 }

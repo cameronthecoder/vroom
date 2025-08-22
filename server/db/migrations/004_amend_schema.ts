@@ -1,6 +1,6 @@
 import {sql, type Kysely} from "kysely";
 
-// Sunday, August 21st - Add predefined coverage types to coverage_types table
+// Sunday, August 21st - Add organizations table, change claim_party.party_type to use claimant_role enum, and alter coverage_selection.amount_cents to allow null values
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function up(db: Kysely<any>): Promise<void> {

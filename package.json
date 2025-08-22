@@ -9,9 +9,11 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "migrate": "tsx ./server/db/migrate.ts",
-    "migrate:down": "tsx ./server/db/migrate-down.ts"
+    "migrate:down": "tsx ./server/db/migrate-down.ts",
+    "generate:types:zod": "npx kanel"
   },
   "dependencies": {
+    "@electric-sql/pglite": "^0.3.7",
     "@nuxt/eslint": "1.8.0",
     "@nuxt/image": "1.11.0",
     "@nuxt/ui": "3.3.2",
@@ -20,6 +22,7 @@
     "eslint": "^9.0.0",
     "jose": "^6.0.12",
     "kysely": "^0.28.5",
+    "kysely-zod-codegen": "^0.17.7",
     "nuxt": "^4.0.3",
     "nuxt-auth-utils": "0.5.23",
     "pg": "^8.16.3",
