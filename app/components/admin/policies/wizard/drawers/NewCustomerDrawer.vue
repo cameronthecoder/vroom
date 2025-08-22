@@ -20,7 +20,6 @@ console.log(items);
 const state = reactive<Partial<NewCustomerSchemaType>>({
   first_name: '',
   last_name: '',
-  email: '',
   phone: '',
   license_number: '',
   license_state: US_STATE.parse('AL'), // Default to Alabama
@@ -54,10 +53,6 @@ const submitForm = async () => {
       <p>{{ state.license_state }}</p>
       <UForm :schema="newCustomerSchema" :state="state" class="p-10 overflow-auto h-full" @submit="submitForm()">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        <UFormField label="Email" name="email">
-          <UInput v-model="state.email" type="email" class="w-full" size="xl" />
-        </UFormField>
-
         <UFormField label="First Name" name="first_name">
           <UInput v-model="state.first_name" size="xl" type="text" class="w-full" />
         </UFormField>

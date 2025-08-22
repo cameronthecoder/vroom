@@ -29,7 +29,6 @@ export const POLICY_PARTY_ROLE = z.enum([
 export const newCustomerSchema = z.object({
     first_name: z.string().min(1, { message: 'First name is required' }),
     last_name: z.string().min(1, { message: 'Last name is required' }),
-    email: z.email({ message: 'Invalid email address' }),
     phone: z.string().refine(validator.isMobilePhone, {message: 'Invalid phone number'}),
     license_number: z.string().optional(),
     license_state: z.enum(US_STATE.enum, { message: 'License state must be a valid US state' }),

@@ -74,7 +74,6 @@ const items = ref<TabsItem[]>([
                     <p class="text-xs tracking-widest font-bold text-primary">NAMED INSURED</p>
                     <p class="text-2xl font-bold">{{ wizardStore.primaryCustomer.last_name.toUpperCase() }}, {{ wizardStore.primaryCustomer.first_name.toUpperCase() }}</p>
                 </div>
-                    <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-mail" size="15"></UIcon> {{ wizardStore.primaryCustomer.email }}</p>
                     <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-phone" size="15"></UIcon> {{ wizardStore.primaryCustomer.phone }}</p>
                     <p class="text-xs text-gray-600 flex gap-3 items-center"><UIcon name="i-lucide-car-front" size="15"></UIcon>{{ wizardStore.primaryCustomer.license_state }} - {{ wizardStore.primaryCustomer.license_number }}</p>
             </div>

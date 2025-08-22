@@ -34,7 +34,6 @@ const callAPI = async (query: string): Promise<void> => {
                 display_name: customer.display_name,
                 first_name: customer.first_name,
                 last_name: customer.last_name,
-                email: customer.email,
                 suffix: customer.license_state + '-' + customer.license_number,
                 phone: customer.phone,
                 license_number: customer.license_number,
