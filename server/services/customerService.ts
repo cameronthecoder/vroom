@@ -1,17 +1,20 @@
 import type { DB, People } from '../../shared/types/db';
-import type { CustomerResult } from '../../shared/types/queries';
 import type { Kysely, Insertable, Selectable, Transaction } from 'kysely';
 import { type Party, PartyService } from './partyService';
 import type { z } from 'zod';
+import { ADDRESS_LINK_TABLE, type AddressTable, type CustomerResult, type _customerWithAddressSchema } from '../../shared/types/queries';
+import { AddressService } from './addressService';
 
 export type Person = Selectable<People>
 export type Address = Selectable<Addresses>
 
 export class CustomerService {
     private partyService: PartyService;
+    private addressService: AddressService;
 
     constructor(private db: Kysely<DB>) {
         this.partyService = new PartyService(db);
+        this.addressService = new AddressService(db);
     }
 
     async searchCustomers(query: string): Promise<Selectable<CustomerResult>[]> {
@@ -52,7 +55,7 @@ export class CustomerService {
         };
     }
 
-    async createPersonForParty(partyId: string, customer: z.infer<typeof newCustomerSchema>, trx?: Transaction<DB>): Promise<Selectable<DB['people']>> {
+    async createPersonForParty(partyId: string, customer: z.infer<typeof _customerWithAddressSchema>, trx?: Transaction<DB>): Promise<Selectable<DB['people']>> {
         const db = trx ?? this.db;
         const newPerson = await db.insertInto('people').values({
             party_id: partyId,
@@ -66,11 +69,12 @@ export class CustomerService {
         return newPerson;
     }
 
-    async createCustomerWithParty(customer: z.infer<typeof newCustomerSchema> & {address: Insertable<Addresses>}): Promise<Selectable<CustomerResult>> {
+    async createCustomerWithParty(customer: z.infer<typeof _customerWithAddressSchema> & {address: Insertable<Addresses>}): Promise<Selectable<CustomerResult>> {
         return await this.db.transaction().execute(async (tx) => {
             const party: Party = await this.partyService.createPartyFromCustomer(customer, tx);
             const person: Person = await this.createPersonForParty(party.id, customer, tx);
-            const address: Address = await this.addressService.createAddressForParty(party.id, customer.address, tx);
+            const address: Address = await this.addressService.createAddress(customer.address, tx);
+            const _link: AddressTable = await this.addressService.createLink(party.id, address, ADDRESS_LINK_TABLE.PARTY_ADDRESSES, tx);
             return CustomerService.toCustomerResult(person, party);
         });
     }

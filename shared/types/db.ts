@@ -57,7 +57,7 @@ export interface Addresses {
   city: string;
   country: Generated<string>;
   created_at: Generated<Timestamp>;
-  id: string;
+  id: Generated<string>;
   latitude: Numeric | null;
   line1: string;
   line2: string | null;

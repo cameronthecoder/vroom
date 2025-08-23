@@ -3,7 +3,12 @@ import type { FetchError } from 'ofetch'
 import type { Selectable } from 'kysely'
 import type {z} from 'zod'
 import type { CustomerResult } from '~~/shared/types/queries'
+import { newCustomerSchema, US_STATE } from '~~/shared/types/zod'
 type SearchResponse = AsyncData<Selectable<CustomerResult>[], FetchError | undefined>
+
+const _customerWithAddressSchema = newCustomerSchema.extend({
+  address: addressesTableSchema.omit({ id: true })
+});
 
 export const searchCustomers = async (query: string): Promise<SearchResponse> => {
   return await useFetch<Selectable<CustomerResult>[]>('/api/customers/search', {
@@ -13,7 +18,7 @@ export const searchCustomers = async (query: string): Promise<SearchResponse> =>
   })
 }
 
-export const createPartyWithCustomer = async (customer: z.infer<typeof newCustomerSchema>): Promise<AsyncData<CustomerResult, FetchError | undefined>> => {
+export const createPartyWithCustomer = async (customer: z.infer<typeof _customerWithAddressSchema>): Promise<AsyncData<CustomerResult, FetchError | undefined>> => {
   console.log(customer);
   
   return await useFetch<Selectable<CustomerResult>>('/api/customers', {

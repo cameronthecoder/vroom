@@ -7,7 +7,8 @@ export default defineNuxtConfig({
     '@nuxt/ui',
     '@nuxt/eslint',
     '@pinia/nuxt',
-    'nuxt-auth-utils'
+    'nuxt-auth-utils',
+    '@compodium/nuxt'
   ],
   css: ['~/assets/css/main.css']
 })

@@ -33,7 +33,7 @@ export const addressesTableSchema = z.object({
   city: z.string(),
   country: z.string(),
   created_at: timestampSchema,
-  id: z.uuid(),
+  id: z.uuid().optional(),
   latitude: numericSchema.nullable(),
   line1: z.string(),
   line2: z.string().nullable(),
