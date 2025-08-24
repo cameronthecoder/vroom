@@ -10,31 +10,22 @@ const toast = useToast();
 
 
 const selectedCustomer = ref<CustomerResult | null>(null)
-/** (A) raw search wrapper: return your domain rows */
 const searchCustomersRaw = async (query: string): Promise<AnyRow[]> => {
   const response = await searchCustomers(query)
-  // adjust if your client shape differs
   return (response?.data?.value ?? []) as AnyRow[]
 }
 
-/** (B) domain -> CommandPaletteItem mapping */
 const toCustomerItem = (row: AnyRow): PaletteRow => {
   const customer = row as unknown as CustomerResult & {role: PolicyPartyRole};
   return {
-    ...customer, // keep original fields for the consumer
+    ...customer, 
     icon: 'i-lucide-user',
-    // label is what CommandPalette renders; tweak to taste
     label: `${(customer.last_name ?? '').toUpperCase()}, ${(customer.first_name ?? '').toUpperCase()}`.trim(),
-    // 'name' is also supported by UCommandPalette, often used in filtering
     name: customer.display_name,
-    // extra line to help the user disambiguate
     suffix: [customer.license_state, customer.license_number].filter(Boolean).join('-')
   }
 }
 
-// (optional) if you still want to mirror loading state into a store:
-// const loadersStore = useLoadingStore()
-// watch(loadingFromChild, v => loadersStore.setLoader('customerLookup', v))
 
 const items = ref<AccordionItem[]>([
   {
