@@ -1,10 +1,12 @@
 <script lang="ts" setup>
 import { useWizardStore } from '~/stores/policy/wizard';
-import CurrentCustomerDrawer from '../drawers/CurrentCustomerDrawer.vue';
+import EntityPickerDrawer, { type AnyRow, type PaletteRow} from '../drawers/EntityPickerDrawer.vue'
 import NewPolicyModal from '../modals/NewPolicyModal.vue';
 import NewCustomerDrawer from '../drawers/NewCustomerDrawer.vue';
 import type { TabsItem } from '@nuxt/ui';
+import { searchCustomers } from '~/services/customerClientService';
 const wizardStore = useWizardStore();
+
 
 const items = ref<TabsItem[]>([
   {
@@ -12,14 +14,34 @@ const items = ref<TabsItem[]>([
     icon: 'i-lucide-file-text',
   },
   {
-    label: 'Payments',
-    icon: 'i-lucide-credit-card',
-  },
-  {
     label: 'Existing Policies',
     icon: 'i-lucide-file'
   }
 ]);
+
+
+/** (A) raw search wrapper: return your domain rows */
+const searchCustomersRaw = async (query: string): Promise<AnyRow[]> => {
+  const response = await searchCustomers(query)
+  // adjust if your client shape differs
+  return (response?.data?.value ?? []) as AnyRow[]
+}
+
+/** (B) domain -> CommandPaletteItem mapping */
+const toCustomerItem = (row: AnyRow): PaletteRow => {
+  const c = row as unknown as CustomerResult;
+  return {
+    ...c, // keep original fields for the consumer
+    icon: 'i-lucide-user',
+    // label is what CommandPalette renders; tweak to taste
+    label: `${(c.last_name ?? '').toUpperCase()}, ${(c.first_name ?? '').toUpperCase()}`.trim(),
+    // 'name' is also supported by UCommandPalette, often used in filtering
+    name: c.display_name,
+    // extra line to help the user disambiguate
+    suffix: [c.license_state, c.license_number].filter(Boolean).join('-')
+  }
+}
+
 
 </script>
 <template>
@@ -36,7 +58,16 @@ const items = ref<TabsItem[]>([
             Current Customer    
         </UButton>
     </div>
-    <CurrentCustomerDrawer />
+        <EntityPickerDrawer
+            v-model="wizardStore.primaryCustomer"
+            v-model:open="wizardStore.drawers.currentCustomer"
+            :search="searchCustomersRaw"
+            :to-item="toCustomerItem"
+            label="Select Customer"
+            placeholder="Search customers…"
+            :debounce="300"
+            @selected="(c) => console.log('picked:', c)"
+    />
     <NewCustomerDrawer />
     </div>
     <div v-else>

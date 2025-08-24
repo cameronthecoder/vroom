@@ -12,6 +12,11 @@ export const useWizardStore = defineStore('wizard', () => {
         newCustomer: ref(false),
     }
 
+    const otherParties = {
+        people: ref<(CustomerResult & {role: PolicyPartyRole})[]>([]),
+        organizations: ref<string[]>([])
+    }
+
     const modals = {
         newPolicyCreation: ref(false)
     }
@@ -47,5 +52,5 @@ export const useWizardStore = defineStore('wizard', () => {
         drawers[name].value = true;
     };
 
-    return { steps, step, drawers, openDrawer, primaryCustomer, currentPolicy, modals };
+    return { steps, otherParties, step, drawers, openDrawer, primaryCustomer, currentPolicy, modals };
 });

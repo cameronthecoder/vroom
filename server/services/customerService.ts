@@ -2,11 +2,8 @@ import type { DB, People } from '../../shared/types/db';
 import type { Kysely, Insertable, Selectable, Transaction } from 'kysely';
 import { type Party, PartyService } from './partyService';
 import type { z } from 'zod';
-import { ADDRESS_LINK_TABLE, type AddressTable, type CustomerResult, type _customerWithAddressSchema } from '../../shared/types/queries';
+import { ADDRESS_LINK_TABLE, type AddressTable, type CustomerResult, type _customerWithAddressSchema, type Address, type Person } from '../../shared/types/queries';
 import { AddressService } from './addressService';
-
-export type Person = Selectable<People>
-export type Address = Selectable<Addresses>
 
 export class CustomerService {
     private partyService: PartyService;

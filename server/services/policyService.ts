@@ -20,11 +20,11 @@ export class PolicyService {
         return newPolicy;
     }
 
-    async attachCustomerToPolicy(policy: Policy, partyId: string): Promise<PolicyPartyRow | undefined> {
+    async attachCustomerToPolicy(policy: Policy, partyId: string, role?: PolicyPartyRole): Promise<PolicyPartyRow | undefined> {
         const attachment = await this.db.insertInto('policy_parties').values({
             policy_id: policy.id,
             party_id: partyId,
-            role: "NAMED_INSURED" as PolicyPartyRole,
+            role: role ?? 'NAMED_INSURED',
             effective_at: policy.effective_at,
             expires_at: policy.expires_at
         }).returningAll().executeTakeFirst();

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CustomerInformationStep from './steps/CustomerInformationStep.vue';
+import PartiesStep from './steps/PartiesStep.vue';
 import { useWizardStore } from '~/stores/policy/wizard';
 const wizardStore = useWizardStore();
 
@@ -122,8 +123,8 @@ const back = () => {
                     </div>
                 </template>
 
-                <template #drivers>
-                    <h3 class="text-2xl font-bold">Drivers</h3>
+                <template #parties>
+                    <PartiesStep />
                 </template>
             </UStepper>
 
